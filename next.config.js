@@ -1,7 +1,11 @@
+const path = require('path');
 /** @type {import('next').NextConfig} */
 let nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
+	sassOptions: {
+		includePaths: [path.join(__dirname, 'styles')],
+	},
 };
 
 if (process.env.NODE_ENV === 'development') {
