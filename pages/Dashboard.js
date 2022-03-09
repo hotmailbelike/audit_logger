@@ -1,8 +1,5 @@
-import React from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -10,73 +7,94 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import AddIcon from '@mui/icons-material/Add';
-import Link from 'next/link';
+import CircularProgress from '@mui/material/CircularProgress';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import format from 'date-fns/format';
+
+import AuditItem from '../components/audit/AuditItem';
+import SingleAuditModal from '../components/audit/SingleAuditModal';
+
+import AuditContext from '../context/audit/auditContext';
 
 const theme = createTheme();
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const Dashboard = () => {
+	const auditContext = useContext(AuditContext);
+
+	const { audits, loadingAudit, listAudits } = auditContext;
+
+	const [showSingleAuditModal, setShowSingleAuditModal] = useState(false);
+	const [singleAudit, setSingleAudit] = useState({});
+
+	/**
+	 * set singleAudit from list of audist by its index
+	 *
+	 * @param {number} auditIndex
+	 */
+	const prepareShowSingleAuditModal = (auditIndex) => {
+		setSingleAudit(audits[auditIndex]);
+		console.log(
+			'🚀 -> file: Dashboard.js -> line 35 -> prepareShowSingleAuditModal -> audits[auditIndex]',
+			audits[auditIndex]
+		);
+		setShowSingleAuditModal(true);
+	};
+
+	useEffect(() => {
+		listAudits();
+	}, []);
+
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			<main>
-				<Container sx={{ py: 8 }} maxWidth='xl'>
-					<Box
-						sx={{
+				{!loadingAudit ? (
+					<Container sx={{ py: 8 }} maxWidth='xl'>
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+								mb: 2,
+							}}
+						>
+							<Typography variant='h6' component='div'>
+								List of Logs
+							</Typography>
+							<Button variant='outlined' endIcon={<AddIcon />}>
+								Add an Audit Log
+							</Button>
+						</Box>
+						<Divider />
+						<br />
+						<Grid container spacing={4}>
+							{audits.map((audit, auditIndex) => (
+								<AuditItem
+									key={audit._id}
+									audit={audit}
+									auditIndex={auditIndex}
+									prepareShowSingleAuditModal={prepareShowSingleAuditModal}
+								></AuditItem>
+							))}
+						</Grid>
+						<SingleAuditModal
+							showSingleAuditModal={showSingleAuditModal}
+							setShowSingleAuditModal={setShowSingleAuditModal}
+							singleAudit={singleAudit}
+						></SingleAuditModal>
+					</Container>
+				) : (
+					<div
+						style={{
 							display: 'flex',
-							justifyContent: 'space-between',
+							flexDirection: 'column',
 							alignItems: 'center',
-							mb: 2,
+							marginTop: '5rem',
 						}}
 					>
-						<Typography variant='h6' component='div'>
-							List of Logs
-						</Typography>
-						<Button variant='outlined' endIcon={<AddIcon />}>
-							Add an Audit Log
-						</Button>
-					</Box>
-					<Divider />
-					<br />
-					<Grid container spacing={4}>
-						{cards.map((card) => (
-							<Grid item key={card} xs={12} sm={12} md={6}>
-								<Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-									<CardContent sx={{ flexGrow: 1 }}>
-										<Typography gutterBottom variant='h6'>
-											Name
-										</Typography>
-										<Typography gutterBottom>
-											<strong>Location:</strong> Lorem ipsum dolor sit amet, consectetur
-											adipisicing elit. Id, tenetur. Lorem, ipsum dolor sit amet
-											consectetur adipisicing elit. Nesciunt, odio.{' '}
-										</Typography>
-
-										<Typography gutterBottom>
-											<strong>Description:</strong> Lorem ipsum dolor sit amet,
-											consectetur adipisicing elit. Id, tenetur. Lorem, ipsum dolor sit
-											amet consectetur adipisicing elit. Nesciunt, odio.{' '}
-										</Typography>
-										<Typography gutterBottom>
-											<strong>Coordinates:</strong> -27.55998421, 153.0811615
-										</Typography>
-										<Typography gutterBottom>
-											<strong>Issued By:</strong> John Doe on{' '}
-											{format(new Date(), 'do MMM yy')}
-										</Typography>
-									</CardContent>
-									<CardActions>
-										<Button size='small'>View</Button>
-										<Button size='small'>Edit</Button>
-									</CardActions>
-								</Card>
-							</Grid>
-						))}
-					</Grid>
-				</Container>
+						<CircularProgress />
+						<h5>Fetching audits...</h5>
+					</div>
+				)}
 			</main>
 		</ThemeProvider>
 	);

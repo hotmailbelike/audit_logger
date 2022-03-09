@@ -9,7 +9,7 @@
 		"start-next": "next start",
 		"start": "NODE_ENV=production node ./server/server.js",
 		"dev": "NODE_ENV=development nodemon ./server/server.js",
-		"dev-server": "PORT=5000 APP_ENV=development-server nodemon ./server/server.js"
+		"dev-server": "PORT=5000 NODE_ENV=development APP_ENV=development-server nodemon ./server/server.js"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.8.1",

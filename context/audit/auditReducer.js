@@ -31,11 +31,6 @@ const auditReducer = (state, { type, payload }) => {
 				...state,
 				loadingAudit: payload,
 			};
-		case `CHANGE_MESSAGE`:
-			return {
-				...state,
-				message: payload,
-			};
 		default:
 			return state;
 	}

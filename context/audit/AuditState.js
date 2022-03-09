@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import Cookies from 'js-cookie';
 
 import AuditContext from './auditContext';
 import auditReducer from './auditReducer';
@@ -19,9 +18,6 @@ const AuditState = (props) => {
 		try {
 			let res = await fetch('/api/audit', {
 				method: 'get',
-				headers: {
-					Authorization: `Bearer ${Cookies.get('token')}`,
-				},
 			});
 			res = await res.json();
 
@@ -46,7 +42,6 @@ const AuditState = (props) => {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${Cookies.get('token')}`,
 				},
 				body: JSON.stringify(formData),
 			});
@@ -72,7 +67,6 @@ const AuditState = (props) => {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${Cookies.get('token')}`,
 				},
 				body: JSON.stringify(updatedAuditObj),
 			});
@@ -94,7 +88,6 @@ const AuditState = (props) => {
 				headers: {
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${Cookies.get('token')}`,
 				},
 			});
 
@@ -138,14 +131,11 @@ const AuditState = (props) => {
 				singleAudit: state.singleAudit,
 				editingAudit: state.editingAudit,
 				loadingAudit: state.loadingAudit,
-				message: state.message,
 
 				setEditingAudit,
 				setLoadingAudit,
 				getAudit,
-				changeMessage,
 				listAudits,
-				searchContentToBeAdded,
 				createAudit,
 				updateAudit,
 			}}
